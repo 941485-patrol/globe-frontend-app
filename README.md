@@ -9,6 +9,7 @@ The application consists of the following pages:
 *   **Login:** Allows existing users to sign in to their accounts.
 *   **Register:** Allows new users to create an account.
 *   **Tasks:** The main page of the application, where authenticated users can manage their tasks. This includes creating, viewing, editing, and deleting tasks.
+*   **Restrictions:** Users not associated with a task are restricted on editing and delete actions.
 
 ## Environment Variables
 

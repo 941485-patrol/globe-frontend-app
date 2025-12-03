@@ -29,3 +29,13 @@
     color: #490e13;
   }
   
+  .error-ulist {
+    flex-grow: 1; 
+    margin: 0; 
+    padding-left: '20px';
+    list-style: none;
+  }
+
+  .error-list {
+    margin-bottom: '5px';
+  }

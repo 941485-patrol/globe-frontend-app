@@ -34,7 +34,7 @@ const Login: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.token, data.userId);
+        login(data.token, data.userId, data.userName);
         navigate('/tasks');
       } else {
         console.error('Login failed:', data);

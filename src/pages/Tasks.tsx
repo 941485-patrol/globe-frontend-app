@@ -12,7 +12,7 @@ import TaskCardsContainer from '../components/TaskCardsContainer';
 import PaginationControls from '../components/PaginationControls';
 
 const Tasks: React.FC = () => {
-  const { token, logout, userId } = useAuth();
+  const { token, logout, userId, userName } = useAuth();
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -198,7 +198,7 @@ const Tasks: React.FC = () => {
   return (
     <div className="tasks-container">
       <h1>Tasks Page</h1>
-      <p>Welcome! You are logged in.</p>
+      <p>Welcome{userName ? `, ${userName}` : ''}! You are logged in.</p>
       <button className="logout-btn" onClick={handleLogout}>Logout</button>
 
       <div style={{ marginTop: '20px' }}>

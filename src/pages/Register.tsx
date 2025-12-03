@@ -10,7 +10,9 @@ const Register: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | string[] | null>(
+    null
+  );
   const navigate = useNavigate();
 
   const handleCloseError = () => {
@@ -20,9 +22,9 @@ const Register: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMessage(null); // Clear previous error message
-    
+
     try {
-      const response = await fetch(`${API_BASE_URL}/register`, {
+      const response = await fetch(`${API_BASE_URL}/user/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +38,12 @@ const Register: React.FC = () => {
         navigate('/login');
       } else {
         console.error('Registration failed:', data);
-        setErrorMessage(data.message || 'An unknown error occurred.');
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors.map((err: any) => err.message);
+          setErrorMessage(errorMessages);
+        } else {
+          setErrorMessage(data.message || 'An unknown error occurred.');
+        }
       }
     } catch (error: any) {
       console.error('Error during registration:', error);

@@ -2,7 +2,7 @@ import React from 'react';
 import './ErrorMessage.css'; // You might want to create a CSS file for this component
 
 interface ErrorMessageProps {
-  message: string | null;
+  message: string | string[] | null;
   onClose: () => void;
 }
 
@@ -13,8 +13,20 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onClose }) => {
 
   return (
     <div className="error-box">
-      <p>{message}</p>
-      <button className="close-button" onClick={onClose}>X</button>
+      {Array.isArray(message) ? (
+        <ul className="error-ulist">
+          {message.map((msg, index) => (
+            <li key={index} className="error-list">
+              {msg}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>{message}</p>
+      )}
+      <button className="close-button" onClick={onClose}>
+        X
+      </button>
     </div>
   );
 };
