@@ -4,16 +4,12 @@ import { useAuth } from '../utils/AuthContext';
 import { API_BASE_URL } from '../utils/constants';
 import { socket } from '../utils/socket';
 import './tasks.css';
-
-interface Task {
-  _id: string;
-  title: string;
-  description: string;
-  user: {
-    _id: string,
-    name: string
-  };
-}
+import CreateTaskModal from '../components/CreateTaskModal';
+import EditTaskModal from '../components/EditTaskModal';
+import DeleteTaskModal from '../components/DeleteTaskModal';
+import type { Task } from '../types';
+import TaskCardsContainer from '../components/TaskCardsContainer';
+import PaginationControls from '../components/PaginationControls';
 
 const Tasks: React.FC = () => {
   const { token, logout, userId } = useAuth();
@@ -207,111 +203,45 @@ const Tasks: React.FC = () => {
 
       <div style={{ marginTop: '20px' }}>
         <button className="add-task-btn" onClick={handleAddTask}>Add New Task</button>
-        <div className="tasks-cards-container">
-          {tasks.map((task) => (
-            <div key={task._id} className="task-card">
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <div className="crud-buttons">
-                <button className="edit-btn" onClick={() => handleEdit(task)}>Edit</button>
-                <button className="delete-btn" onClick={() => handleDelete(task)}>Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
 
-        <div className="pagination-controls">
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-            Next
-          </button>
-        </div>
+        <TaskCardsContainer
+          tasks={tasks}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
+
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrevPage={handlePrevPage}
+          onNextPage={handleNextPage}
+        />
       </div>
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Create New Task</h2>
-              <button className="close-btn" onClick={handleCloseModal}>&times;</button>
-            </div>
-            <input
-              type="text"
-              placeholder="Title"
-              value={newTask.title}
-              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-            />
-            <textarea
-              placeholder="Description"
-              value={newTask.description}
-              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-            />
-            <div className="modal-actions">
-              <button onClick={handleSaveTask}>Save</button>
-              <button onClick={handleCloseModal}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {isEditModalOpen && editingTask && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Edit Task</h2>
-              <button className="close-btn" onClick={handleCloseModal}>&times;</button>
-            </div>
-            <input
-              type="text"
-              placeholder="Title"
-              value={editingTask.title}
-              onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-              disabled={!isOwner}
-            />
-            <textarea
-              placeholder="Description"
-              value={editingTask.description}
-              onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-              disabled={!isOwner}
-            />
-            <div className="modal-actions">
-              {isOwner && <button onClick={handleUpdateTask}>Update</button>}
-              <button onClick={handleCloseModal}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreateTaskModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        newTask={newTask}
+        setNewTask={setNewTask}
+        onSaveTask={handleSaveTask}
+      />
 
-      {isDeleteModalOpen && editingTask && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Delete Task</h2>
-              <button className="close-btn" onClick={handleCloseModal}>&times;</button>
-            </div>
-            {isOwner ? (
-              <>
-                <p>Are you sure you want to delete this task?</p>
-                <div className="modal-actions">
-                  <button onClick={handleDeleteTask}>Delete</button>
-                  <button onClick={handleCloseModal}>Cancel</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <p>You cannot delete this task as you are not the owner.</p>
-                <div className="modal-actions">
-                  <button onClick={handleCloseModal}>Close</button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      <EditTaskModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseModal}
+        editingTask={editingTask}
+        setEditingTask={setEditingTask}
+        onUpdateTask={handleUpdateTask}
+        isOwner={isOwner}
+      />
+
+      <DeleteTaskModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseModal}
+        editingTask={editingTask}
+        onDeleteTask={handleDeleteTask}
+        isOwner={isOwner}
+      />
     </div>
   );
 };
