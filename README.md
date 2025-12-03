@@ -26,11 +26,16 @@ VITE_BACKEND_API_URL="http://localhost:3000"
 
 To run the application locally, follow these steps:
 
-1.  **Install dependencies:**
+1. **Clone repository:**
+    ```bash
+    git clone <repository-url>
+    ```
+
+2.  **Install dependencies:**
     ```bash
     npm install
     ```
-2.  **Start the development server:**
+3.  **Start the development server:**
     ```bash
     npm run dev
     ```
