@@ -1,4 +1,5 @@
 import React from 'react';
+import ErrorMessage from './ErrorMessage';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -6,6 +7,8 @@ interface CreateTaskModalProps {
   newTask: { title: string; description: string };
   setNewTask: React.Dispatch<React.SetStateAction<{ title: string; description: string }>>;
   onSaveTask: () => void;
+  error: string | string[] | null;
+  clearError: () => void;
 }
 
 const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
@@ -14,6 +17,8 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   newTask,
   setNewTask,
   onSaveTask,
+  error,
+  clearError,
 }) => {
   if (!isOpen) return null;
 
@@ -26,6 +31,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             &times;
           </button>
         </div>
+        <ErrorMessage message={error} onClose={clearError} />
         <input
           type="text"
           placeholder="Title"

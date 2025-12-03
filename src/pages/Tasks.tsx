@@ -24,6 +24,7 @@ const Tasks: React.FC = () => {
   const [newTask, setNewTask] = useState({ title: '', description: '' });
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [error, setError] = useState<string | string[] | null>(null);
 
   const handleLogout = () => {
     logout();
@@ -96,6 +97,7 @@ const Tasks: React.FC = () => {
   };
 
   const handleAddTask = () => {
+    setError(null);
     setIsModalOpen(true);
   };
 
@@ -104,6 +106,7 @@ const Tasks: React.FC = () => {
     setIsEditModalOpen(false);
     setIsDeleteModalOpen(false);
     setEditingTask(null);
+    setError(null);
   };
 
   const handleSaveTask = async () => {
@@ -118,20 +121,29 @@ const Tasks: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+         if (errorData.errors && Array.isArray(errorData.errors)) {
+          const errorMessages = errorData.errors.map((err: any) => err.message);
+          setError(errorMessages);
+        } else {
+          setError(errorData.message || 'An unknown error occurred.');
+        }
+        return;
       }
-
+      
       // After saving, close the modal and refresh the tasks
       handleCloseModal();
       fetchTasks();
       setNewTask({ title: '', description: '' });
-
-    } catch (error) {
+      
+    } catch (error: any) {
       console.error('Error saving task:', error);
+      setError(error.message || 'Network error or server unreachable.');
     }
   };
 
   const handleEdit = (task: Task) => {
+    setError(null);
     setEditingTask(task);
     setIsOwner(task.user._id === userId);
     setIsEditModalOpen(true);
@@ -183,17 +195,24 @@ const Tasks: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+         if (errorData.errors && Array.isArray(errorData.errors)) {
+          const errorMessages = errorData.errors.map((err: any) => err.message);
+          setError(errorMessages);
+        } else {
+          setError(errorData.message || 'An unknown error occurred.');
+        }
+        return;
       }
 
-      handleCloseModal();
-      fetchTasks();
+        handleCloseModal();
+        fetchTasks();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating task:', error);
+      setError(error.message || 'Network error or server unreachable.');
     }
   };
-
 
   return (
     <div className="tasks-container">
@@ -224,6 +243,8 @@ const Tasks: React.FC = () => {
         newTask={newTask}
         setNewTask={setNewTask}
         onSaveTask={handleSaveTask}
+        error={error}
+        clearError={() => setError(null)}
       />
 
       <EditTaskModal
@@ -233,6 +254,8 @@ const Tasks: React.FC = () => {
         setEditingTask={setEditingTask}
         onUpdateTask={handleUpdateTask}
         isOwner={isOwner}
+        error={error}
+        clearError={() => setError(null)}
       />
 
       <DeleteTaskModal

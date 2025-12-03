@@ -1,4 +1,5 @@
 import React from 'react';
+import ErrorMessage from './ErrorMessage';
 
 import type { Task } from '../types';
 
@@ -9,6 +10,8 @@ interface EditTaskModalProps {
   setEditingTask: React.Dispatch<React.SetStateAction<Task | null>>;
   onUpdateTask: () => void;
   isOwner: boolean;
+  error: string | string[] | null;
+  clearError: () => void;
 }
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({
@@ -18,6 +21,8 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
   setEditingTask,
   onUpdateTask,
   isOwner,
+  error,
+  clearError,
 }) => {
   if (!isOpen || !editingTask) return null;
 
@@ -30,6 +35,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
             &times;
           </button>
         </div>
+        <ErrorMessage message={error} onClose={clearError} />
         <input
           type="text"
           placeholder="Title"
